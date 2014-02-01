@@ -64,38 +64,16 @@
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"generating cell");
     static NSString *CellIdentifier = @"ImageCell";
 
     // Dequeue or create a cell of the appropriate type.
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
-    UIImageView *imageView = nil;
-    const int IMAGE_TAG = 100;
-    if (cell == nil) {
-        NSLog(@"cell is nil");
-        cell = [[UICollectionViewCell alloc] initWithFrame:CGRectMake(0,0,150,150)];
-        cell.backgroundColor = [UIColor whiteColor];
-        imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 148, 148)];
-        imageView.contentMode = UIViewContentModeScaleAspectFill;
-        imageView.tag = IMAGE_TAG;
-        [cell.contentView addSubview:imageView];
-    } else {
-        NSLog(@"cell is not nil");
-        imageView = (UIImageView *)[cell.contentView viewWithTag:IMAGE_TAG];
-    }
-
-    // Clear the previous image
-    //imageView.image = nil;
     NSURL *imageURL = [NSURL URLWithString:[self.imageResults[indexPath.row] valueForKeyPath:@"url"]];
-    NSLog(@"%@", imageURL);
-//    imageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:imageURL]];
-    [imageView setImageWithURL:imageURL];
-    
-    //HOW TO DEBUG WHEN IMAGE DOESN'T SHOW UP ?????
-    
-    
-//    cell.backgroundColor = [UIColor colorWithRed:((10 * indexPath.row)/255.0) green:((20 * indexPath.row)/255.0) blue:((30 * indexPath.row)/255.0) alpha:1];
-
+    UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:imageURL]];
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 148, 148)];
+    imageView.image = image;
+    imageView.contentMode = UIViewContentModeScaleAspectFill;
+    [cell.contentView addSubview:imageView];
     return cell;
 }
 
@@ -106,19 +84,19 @@
     return CGSizeMake(150, 150);
 }
 
-- (UIEdgeInsets)collectionView:
-(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    return UIEdgeInsetsMake(50, 20, 50, 20);
-}
+//- (UIEdgeInsets)collectionView:
+//(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+//    return UIEdgeInsetsMake(5, 5, 5, 5);
+//}
 
 //
 //#pragma mark - UISearchDisplay delegate
 //
 //- (void)searchDisplayControllerDidBeginSearch:(UISearchDisplayController *)controller {
 //    [self.imageResults removeAllObjects];
-//    [self.searchDisplayController.searchResultsTableView reloadData];
+//    [self.imageCollectionView reloadData];
 //}
-//
+
 //- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
 //{
 //    return NO;
@@ -134,6 +112,8 @@
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         id results = [JSON valueForKeyPath:@"responseData.results"];
+        NSLog(@"%@", results);
+
         if ([results isKindOfClass:[NSArray class]]) {
             [self.imageResults removeAllObjects];
             [self.imageResults addObjectsFromArray:results];
