@@ -13,6 +13,8 @@
 @interface SearchViewController ()
 
 @property (nonatomic, strong) NSMutableArray *imageResults;
+@property (weak, nonatomic) IBOutlet UICollectionView *imageCollectionView;
+
 
 @end
 
@@ -31,6 +33,22 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    NSString *version = [[UIDevice currentDevice] systemVersion];
+    
+    NSLog(@"Version is %@.", version);
+    
+    NSComparisonResult verComparison = [version compare:@"7.0"];
+    
+    if ((verComparison == NSOrderedSame) || (verComparison == NSOrderedDescending)) {
+        // running 7.0 or higher.
+        self.edgesForExtendedLayout = UIRectEdgeNone;
+    }
+    
+    [self.imageCollectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"ImageCell"];
+    self.imageCollectionView.delegate = self;
+    self.imageCollectionView.dataSource = self;
+    
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -39,36 +57,38 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - UITableView data source
+#pragma mark - UICollectionView data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
-    // Return the number of sections.
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
     return [self.imageResults count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    static NSString *CellIdentifier = @"CellIdentifier";
-    
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"generating cell");
+    static NSString *CellIdentifier = @"ImageCell";
+
     // Dequeue or create a cell of the appropriate type.
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
     UIImageView *imageView = nil;
     const int IMAGE_TAG = 1;
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 300, 300)];
+        cell = [[UICollectionViewCell alloc] initWithFrame:CGRectMake(0,0,150,150)];
+        cell.backgroundColor = [UIColor whiteColor];
+        imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 148, 148)];
         imageView.contentMode = UIViewContentModeScaleAspectFill;
         imageView.tag = IMAGE_TAG;
         [cell.contentView addSubview:imageView];
     } else {
         imageView = (UIImageView *)[cell.contentView viewWithTag:IMAGE_TAG];
     }
-    
+
     // Clear the previous image
     imageView.image = nil;
     [imageView setImageWithURL:[NSURL URLWithString:[self.imageResults[indexPath.row] valueForKeyPath:@"url"]]];
@@ -76,21 +96,30 @@
     return cell;
 }
 
-- (float)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 300;
+#pragma mark – UICollectionViewDelegateFlowLayout
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    
+    return CGSizeMake(150, 150);
 }
 
-#pragma mark - UISearchDisplay delegate
-
-- (void)searchDisplayControllerDidBeginSearch:(UISearchDisplayController *)controller {
-    [self.imageResults removeAllObjects];
-    [self.searchDisplayController.searchResultsTableView reloadData];
+- (UIEdgeInsets)collectionView:
+(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+    return UIEdgeInsetsMake(50, 20, 50, 20);
 }
 
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
-{
-    return NO;
-}
+//
+//#pragma mark - UISearchDisplay delegate
+//
+//- (void)searchDisplayControllerDidBeginSearch:(UISearchDisplayController *)controller {
+//    [self.imageResults removeAllObjects];
+//    [self.searchDisplayController.searchResultsTableView reloadData];
+//}
+//
+//- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
+//{
+//    return NO;
+//}
 
 #pragma mark - UISearchBar delegate
 
@@ -105,7 +134,7 @@
         if ([results isKindOfClass:[NSArray class]]) {
             [self.imageResults removeAllObjects];
             [self.imageResults addObjectsFromArray:results];
-            [self.searchDisplayController.searchResultsTableView reloadData];
+            [self.imageCollectionView reloadData];
         }
     } failure:nil];
     
