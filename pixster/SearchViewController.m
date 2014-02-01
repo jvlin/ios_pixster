@@ -40,7 +40,10 @@
         self.edgesForExtendedLayout = UIRectEdgeNone;
     }
     
-    [self.imageCollectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"ImageCell"];
+    UINib *cellNib = [UINib nibWithNibName:@"CustomCell" bundle:nil];
+    [self.imageCollectionView registerNib:cellNib forCellWithReuseIdentifier:@"ImageCell"];
+    
+//    [self.imageCollectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"ImageCell"];
     self.imageCollectionView.dataSource = self;
 }
 
@@ -66,14 +69,23 @@
 {
     static NSString *CellIdentifier = @"ImageCell";
 
-    // Dequeue or create a cell of the appropriate type.
+//    // Dequeue or create a cell of the appropriate type.
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
-    NSURL *imageURL = [NSURL URLWithString:[self.imageResults[indexPath.row] valueForKeyPath:@"url"]];
-    UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:imageURL]];
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 148, 148)];
-    imageView.image = image;
-    imageView.contentMode = UIViewContentModeScaleAspectFill;
-    [cell.contentView addSubview:imageView];
+//    NSURL *imageURL = [NSURL URLWithString:[self.imageResults[indexPath.row] valueForKeyPath:@"url"]];
+//    UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:imageURL]];
+//    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 148, 148)];
+//    imageView.image = image;
+//    imageView.contentMode = UIViewContentModeScaleAspectFill;
+//    [cell.contentView addSubview:imageView];
+//    return cell;
+    
+    const int IMAGE_TAG = 100;
+    UIImageView *imageView = (UIImageView *)[cell viewWithTag:IMAGE_TAG];
+    
+    // Clear the previous image
+    imageView.image = nil;
+    [imageView setImageWithURL:[NSURL URLWithString:[self.imageResults[indexPath.item] valueForKeyPath:@"url"]]];
+    
     return cell;
 }
 
@@ -81,7 +93,7 @@
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    return CGSizeMake(150, 150);
+    return CGSizeMake(155, 150);
 }
 
 //- (UIEdgeInsets)collectionView:
@@ -107,7 +119,7 @@
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     [searchBar setShowsCancelButton:NO animated:YES];
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=%@", [searchBar.text stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8&q=%@", [searchBar.text stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]]];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
