@@ -34,21 +34,14 @@
 {
     [super viewDidLoad];
     NSString *version = [[UIDevice currentDevice] systemVersion];
-    
-    NSLog(@"Version is %@.", version);
-    
     NSComparisonResult verComparison = [version compare:@"7.0"];
-    
     if ((verComparison == NSOrderedSame) || (verComparison == NSOrderedDescending)) {
         // running 7.0 or higher.
         self.edgesForExtendedLayout = UIRectEdgeNone;
     }
     
     [self.imageCollectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"ImageCell"];
-    self.imageCollectionView.delegate = self;
     self.imageCollectionView.dataSource = self;
-    
-    
 }
 
 - (void)didReceiveMemoryWarning
@@ -77,8 +70,9 @@
     // Dequeue or create a cell of the appropriate type.
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
     UIImageView *imageView = nil;
-    const int IMAGE_TAG = 1;
+    const int IMAGE_TAG = 100;
     if (cell == nil) {
+        NSLog(@"cell is nil");
         cell = [[UICollectionViewCell alloc] initWithFrame:CGRectMake(0,0,150,150)];
         cell.backgroundColor = [UIColor whiteColor];
         imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 148, 148)];
@@ -86,13 +80,22 @@
         imageView.tag = IMAGE_TAG;
         [cell.contentView addSubview:imageView];
     } else {
+        NSLog(@"cell is not nil");
         imageView = (UIImageView *)[cell.contentView viewWithTag:IMAGE_TAG];
     }
 
     // Clear the previous image
-    imageView.image = nil;
-    [imageView setImageWithURL:[NSURL URLWithString:[self.imageResults[indexPath.row] valueForKeyPath:@"url"]]];
+    //imageView.image = nil;
+    NSURL *imageURL = [NSURL URLWithString:[self.imageResults[indexPath.row] valueForKeyPath:@"url"]];
+    NSLog(@"%@", imageURL);
+//    imageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:imageURL]];
+    [imageView setImageWithURL:imageURL];
     
+    //HOW TO DEBUG WHEN IMAGE DOESN'T SHOW UP ?????
+    
+    
+//    cell.backgroundColor = [UIColor colorWithRed:((10 * indexPath.row)/255.0) green:((20 * indexPath.row)/255.0) blue:((30 * indexPath.row)/255.0) alpha:1];
+
     return cell;
 }
 
