@@ -17,8 +17,8 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="cFJ-LK-I0J">
-                    <rect key="frame" x="0.0" y="44" width="320" height="568"/>
+                <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="cFJ-LK-I0J">
+                    <rect key="frame" x="0.0" y="44" width="320" height="523"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="vI0-z8-uCl">
                         <size key="itemSize" width="150" height="150"/>
@@ -28,7 +28,7 @@
                     </collectionViewFlowLayout>
                     <cells/>
                 </collectionView>
-                <searchBar contentMode="redraw" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jUh-W2-SQN">
+                <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="jUh-W2-SQN">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                     <textInputTraits key="textInputTraits"/>
@@ -38,6 +38,16 @@
                 </searchBar>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="cFJ-LK-I0J" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="3I6-NV-TFp"/>
+                <constraint firstItem="cFJ-LK-I0J" firstAttribute="top" secondItem="jUh-W2-SQN" secondAttribute="bottom" id="3Zn-5E-ZpJ"/>
+                <constraint firstItem="jUh-W2-SQN" firstAttribute="top" secondItem="1" secondAttribute="top" id="DDq-es-NDV"/>
+                <constraint firstItem="jUh-W2-SQN" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="OCg-3I-TEg"/>
+                <constraint firstAttribute="trailing" secondItem="jUh-W2-SQN" secondAttribute="trailing" id="OoI-2g-HBI"/>
+                <constraint firstAttribute="trailing" secondItem="cFJ-LK-I0J" secondAttribute="trailing" id="WAy-i1-aP5"/>
+                <constraint firstItem="cFJ-LK-I0J" firstAttribute="top" secondItem="jUh-W2-SQN" secondAttribute="bottom" id="cM4-Aj-3md"/>
+                <constraint firstAttribute="bottom" secondItem="cFJ-LK-I0J" secondAttribute="bottom" constant="1" id="mCd-lz-1b1"/>
+            </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
         </view>
         <searchDisplayController id="rT2-Z7-Qyx">
